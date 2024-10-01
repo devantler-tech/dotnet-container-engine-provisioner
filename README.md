@@ -10,28 +10,17 @@ Simple provisioners that can provision various resources in container engines.
   <summary>Show/hide folder structure</summary>
 
 <!-- readme-tree start -->
-
 ```
 .
 ├── .github
 │   └── workflows
-├── Devantler.KubernetesProvisioner.Cluster.Core
-├── Devantler.KubernetesProvisioner.Cluster.K3d
-├── Devantler.KubernetesProvisioner.Cluster.K3d.Tests
-│   ├── K3dProvisionerTests
-│   └── assets
-├── Devantler.KubernetesProvisioner.Cluster.Kind
-├── Devantler.KubernetesProvisioner.Cluster.Kind.Tests
-│   ├── KindProvisionerTests
-│   └── assets
-├── Devantler.KubernetesProvisioner.Resources.Native
-└── Devantler.KubernetesProvisioner.Resources.Native.Tests
-    ├── KubernetesResourceProvisionerTests
-    └── assets
+├── Devantler.ContainerEngineProvisioner.Core
+├── Devantler.ContainerEngineProvisioner.Docker
+└── Devantler.ContainerEngineProvisioner.Docker.Tests
+    └── DockerProvisionerTests
 
-15 directories
+6 directories
 ```
-
 <!-- readme-tree end -->
 
 </details>
