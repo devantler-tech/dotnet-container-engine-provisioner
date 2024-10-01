@@ -1,21 +1,40 @@
-# .NET Template
+# 🐳 .NET Container Engine Provisioner
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Test](https://github.com/devantler/dotnet-container-engine-provisioner/actions/workflows/test.yaml/badge.svg)](https://github.com/devantler/dotnet-container-engine-provisioner/actions/workflows/test.yaml)
+[![codecov](https://codecov.io/gh/devantler/dotnet-container-engine-provisioner/graph/badge.svg?token=RhQPb4fE7z)](https://codecov.io/gh/devantler/dotnet-container-engine-provisioner)
+
+Simple provisioners that can provision various resources in container engines.
 
 <details>
   <summary>Show/hide folder structure</summary>
 
 <!-- readme-tree start -->
+
 ```
 .
-└── .github
-    └── workflows
+├── .github
+│   └── workflows
+├── Devantler.KubernetesProvisioner.Cluster.Core
+├── Devantler.KubernetesProvisioner.Cluster.K3d
+├── Devantler.KubernetesProvisioner.Cluster.K3d.Tests
+│   ├── K3dProvisionerTests
+│   └── assets
+├── Devantler.KubernetesProvisioner.Cluster.Kind
+├── Devantler.KubernetesProvisioner.Cluster.Kind.Tests
+│   ├── KindProvisionerTests
+│   └── assets
+├── Devantler.KubernetesProvisioner.Resources.Native
+└── Devantler.KubernetesProvisioner.Resources.Native.Tests
+    ├── KubernetesResourceProvisionerTests
+    └── assets
 
-2 directories
+15 directories
 ```
+
 <!-- readme-tree end -->
 
 </details>
-
-A simple .NET template for new projects.
 
 ## Prerequisites
 
@@ -23,46 +42,25 @@ A simple .NET template for new projects.
 
 ## 🚀 Getting Started
 
-To get started, you can install the package from NuGet.
+To get started, you can install the packages from NuGet.
 
 ```bash
-dotnet add package <package-name>
+# For provisioning resources in Docker
+dotnet add package Devantler.ContainerEngineProvisioner.Docker
 ```
 
-## 📝 Usage
+## Usage
 
-### Add a solution
+To use the provisioners, all you need to do is to create and use a new instance of the provisioner.
 
-```sh
-dotnet new sln --name <name-of-solution>
-```
+```csharp
+using Devantler.ContainerEngineProvisioner.Docker;
 
-### Add a project
+var provisioner = new DockerProvisioner();
 
-```sh
-dotnet new <project-type> --output folder1/folder2/<name-of-project>
-```
+string registryName = "new_registry";
+int port = 5010;
 
-### Add project to solution
-
-```sh
-dotnet sln add folder1/folder2/<name-of-project>
-```
-
-### Building your solution
-
-```sh
-dotnet build
-```
-
-### Running a project in your solution
-
-```sh
-dotnet run folder1/folder2/<name-of-project>
-```
-
-### Testing your solution
-
-```sh
-dotnet test
+// Act
+await _provisioner.CreateRegistryAsync(registryName, port, CancellationToken.None);
 ```
