@@ -29,7 +29,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   }
 
   /// <inheritdoc/>
-  public async Task<bool> CheckContainerExistsAsync(string name, CancellationToken token)
+  public async Task<bool> CheckContainerExistsAsync(string name, CancellationToken cancellationToken = default)
   {
     var containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters
     {
@@ -41,17 +41,17 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
           [name] = true
         }
       }
-    }, token).ConfigureAwait(false);
+    }, cancellationToken).ConfigureAwait(false);
 
     return containers.Any();
   }
 
   /// <inheritdoc/>
-  public async Task<bool> CheckReadyAsync(CancellationToken token)
+  public async Task<bool> CheckReadyAsync(CancellationToken cancellationToken = default)
   {
     try
     {
-      await _dockerClient.System.PingAsync(token).ConfigureAwait(false);
+      await _dockerClient.System.PingAsync(cancellationToken).ConfigureAwait(false);
     }
     catch (DockerApiException)
     {
@@ -61,9 +61,9 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   }
 
   /// <inheritdoc/>
-  public async Task CreateRegistryAsync(string name, int port, CancellationToken token, Uri? proxyUrl = null)
+  public async Task CreateRegistryAsync(string name, int port, Uri? proxyUrl = default, CancellationToken cancellationToken = default)
   {
-    bool registryExists = await CheckContainerExistsAsync(name, token).ConfigureAwait(false);
+    bool registryExists = await CheckContainerExistsAsync(name, cancellationToken).ConfigureAwait(false);
 
     if (registryExists)
     {
@@ -114,9 +114,9 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   }
 
   /// <inheritdoc/>
-  public async Task DeleteRegistryAsync(string name, CancellationToken token)
+  public async Task DeleteRegistryAsync(string name, CancellationToken cancellationToken = default)
   {
-    string containerId = await GetContainerIdAsync(name, token).ConfigureAwait(false);
+    string containerId = await GetContainerIdAsync(name, cancellationToken).ConfigureAwait(false);
 
     if (string.IsNullOrEmpty(containerId))
     {
@@ -124,13 +124,13 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     }
     else
     {
-      _ = await _dockerClient.Containers.StopContainerAsync(containerId, new ContainerStopParameters(), token).ConfigureAwait(false);
-      await _dockerClient.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters(), token).ConfigureAwait(false);
+      _ = await _dockerClient.Containers.StopContainerAsync(containerId, new ContainerStopParameters(), cancellationToken).ConfigureAwait(false);
+      await _dockerClient.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters(), cancellationToken).ConfigureAwait(false);
     }
   }
 
   /// <inheritdoc/>
-  public async Task<string> GetContainerIdAsync(string name, CancellationToken token)
+  public async Task<string> GetContainerIdAsync(string name, CancellationToken cancellationToken = default)
   {
     var containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters
     {
@@ -142,7 +142,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
           [name] = true
         }
       }
-    }, token).ConfigureAwait(false) ?? throw new InvalidOperationException($"Could not find container '{name}'");
+    }, cancellationToken).ConfigureAwait(false) ?? throw new InvalidOperationException($"Could not find container '{name}'");
 
     return containers.FirstOrDefault()?.ID ?? string.Empty;
   }

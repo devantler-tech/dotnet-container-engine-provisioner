@@ -1,7 +1,7 @@
 namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
-/// Unit tests for <see cref="DockerProvisioner.CreateRegistryAsync(string, int, CancellationToken, Uri?)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
+/// Unit tests for <see cref="DockerProvisioner.CreateRegistryAsync(string, int, Uri?, CancellationToken)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
 /// </summary>
 public class CreateRegistryAsyncTests
 {
@@ -17,17 +17,17 @@ public class CreateRegistryAsyncTests
     // Arrange
     string registryName = "new_registry";
     int port = 5999;
-    var token = CancellationToken.None;
+    var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryAsync(registryName, port, token);
+    await _provisioner.CreateRegistryAsync(registryName, port, cancellationToken: cancellationToken);
 
     // Assert
-    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, token);
+    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken: cancellationToken);
     Assert.True(registryExists);
 
     // Cleanup
-    await _provisioner.DeleteRegistryAsync(registryName, token);
+    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken: cancellationToken);
   }
 
   /// <summary>
@@ -39,17 +39,17 @@ public class CreateRegistryAsyncTests
     // Arrange
     string registryName = "new_registry";
     int port = 5999;
-    var token = CancellationToken.None;
+    var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryAsync(registryName, port, token);
-    await _provisioner.CreateRegistryAsync(registryName, port, token);
+    await _provisioner.CreateRegistryAsync(registryName, port, cancellationToken: cancellationToken);
+    await _provisioner.CreateRegistryAsync(registryName, port, cancellationToken: cancellationToken);
 
     // Assert
-    bool registry1Exists = await _provisioner.CheckContainerExistsAsync(registryName, token);
-    await _provisioner.DeleteRegistryAsync(registryName, token);
+    bool registry1Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
+    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken);
     Assert.True(registry1Exists);
-    bool registry2Exists = await _provisioner.CheckContainerExistsAsync(registryName, token);
+    bool registry2Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
     Assert.False(registry2Exists);
   }
 
@@ -62,17 +62,17 @@ public class CreateRegistryAsyncTests
     // Arrange
     string registryName = "new_registry";
     int port = 5999;
-    var token = CancellationToken.None;
+    var cancellationToken = CancellationToken.None;
     Uri proxyUrl = new("http://proxy:8080");
 
     // Act
-    await _provisioner.CreateRegistryAsync(registryName, port, token, proxyUrl);
+    await _provisioner.CreateRegistryAsync(registryName, port, proxyUrl, cancellationToken);
 
     // Assert
-    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, token);
+    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
     Assert.True(registryExists);
 
     // Cleanup
-    await _provisioner.DeleteRegistryAsync(registryName, token);
+    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken);
   }
 }
