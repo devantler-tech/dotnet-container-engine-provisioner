@@ -102,7 +102,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       [
         "sh",
         "-c",
-        $"echo \"{content}\" > {path}"
+        $"echo '{content}' > {path}"
       ]
     }, cancellationToken).ConfigureAwait(false);
     _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
