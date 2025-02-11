@@ -38,4 +38,14 @@ public interface IContainerEngineProvisioner
   /// Checks that the container exists in the container engine.
   /// </summary>
   Task<bool> CheckContainerExistsAsync(string name, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Create a directory in a container.
+  /// </summary>
+  Task CreateDirectoryInContainerAsync(string containerId, string path, bool recursive, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Create a file in a container.
+  /// </summary>
+  Task CreateFileInContainerAsync(string containerId, string path, string content, CancellationToken cancellationToken = default);
 }
