@@ -9,7 +9,10 @@ namespace Devantler.ContainerEngineProvisioner.Docker;
 /// </summary>
 public sealed class DockerProvisioner : IContainerEngineProvisioner
 {
-  readonly DockerClient _dockerClient;
+  /// <summary>
+  /// The Docker client.
+  /// </summary>
+  public readonly DockerClient Client;
 
   /// <summary>
   /// Initializes a new instance of the <see cref="DockerProvisioner"/> class.
@@ -21,17 +24,17 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     {
       var uri = new Uri(dockerHost);
       using var uriConfig = new DockerClientConfiguration(uri);
-      _dockerClient = uriConfig.CreateClient();
+      Client = uriConfig.CreateClient();
       return;
     }
     using var defaultConfig = new DockerClientConfiguration();
-    _dockerClient = defaultConfig.CreateClient();
+    Client = defaultConfig.CreateClient();
   }
 
   /// <inheritdoc/>
   public async Task<bool> CheckContainerExistsAsync(string name, CancellationToken cancellationToken = default)
   {
-    var containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters
+    var containers = await Client.Containers.ListContainersAsync(new ContainersListParameters
     {
       All = true,
       Filters = new Dictionary<string, IDictionary<string, bool>>
@@ -51,13 +54,58 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   {
     try
     {
-      await _dockerClient.System.PingAsync(cancellationToken).ConfigureAwait(false);
+      await Client.System.PingAsync(cancellationToken).ConfigureAwait(false);
     }
     catch (DockerApiException)
     {
       return false;
     }
     return true;
+  }
+
+  /// <summary>
+  /// Creates a directory in a container.
+  /// </summary>
+  /// <param name="containerId"></param>
+  /// <param name="path"></param>
+  /// <param name="recursive"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  public async Task CreateDirectoryInContainerAsync(string containerId, string path, bool recursive, CancellationToken cancellationToken = default)
+  {
+    var execResponse = await Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
+    {
+      Cmd =
+      [
+        "mkdir",
+        recursive ? "-p" : "",
+        path
+      ],
+    }, cancellationToken).ConfigureAwait(false);
+    _ = Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken);
+  }
+
+  /// <summary>
+  /// Creates a file in a container.
+  /// </summary>
+  /// <param name="containerId"></param>
+  /// <param name="path"></param>
+  /// <param name="content"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  /// <exception cref="NotImplementedException"></exception>
+  public async Task CreateFileInContainerAsync(string containerId, string path, string content, CancellationToken cancellationToken = default)
+  {
+    var execResponse = await Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
+    {
+      Cmd =
+      [
+        "sh",
+        "-c",
+        $"echo \"{content}\" > {path}"
+      ]
+    }, cancellationToken).ConfigureAwait(false);
+    _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc/>
@@ -72,11 +120,11 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     CreateContainerResponse registry;
     try
     {
-      await _dockerClient.Images.CreateImageAsync(new ImagesCreateParameters
+      await Client.Images.CreateImageAsync(new ImagesCreateParameters
       {
         FromImage = "registry:2"
       }, null, new Progress<JSONMessage>()).ConfigureAwait(false);
-      registry = await _dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
+      registry = await Client.Containers.CreateContainerAsync(new CreateContainerParameters
       {
         Image = "registry:2",
         Name = name,
@@ -105,7 +153,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
         $"REGISTRY_PROXY_REMOTEURL={proxyUrl}"
       } : null
       }).ConfigureAwait(false);
-      _ = await _dockerClient.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters()).ConfigureAwait(false);
+      _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters()).ConfigureAwait(false);
     }
     catch (DockerApiException)
     {
@@ -124,15 +172,15 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     }
     else
     {
-      _ = await _dockerClient.Containers.StopContainerAsync(containerId, new ContainerStopParameters(), cancellationToken).ConfigureAwait(false);
-      await _dockerClient.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters(), cancellationToken).ConfigureAwait(false);
+      _ = await Client.Containers.StopContainerAsync(containerId, new ContainerStopParameters(), cancellationToken).ConfigureAwait(false);
+      await Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters(), cancellationToken).ConfigureAwait(false);
     }
   }
 
   /// <inheritdoc/>
   public async Task<string> GetContainerIdAsync(string name, CancellationToken cancellationToken = default)
   {
-    var containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters
+    var containers = await Client.Containers.ListContainersAsync(new ContainersListParameters
     {
       All = true,
       Filters = new Dictionary<string, IDictionary<string, bool>>
