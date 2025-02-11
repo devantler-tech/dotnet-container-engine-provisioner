@@ -168,7 +168,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
 
     if (string.IsNullOrEmpty(containerId))
     {
-      throw new InvalidOperationException($"Could not find registry '{name}'");
+      throw new ContainerEngineProvisionerException($"Could not find registry '{name}'");
     }
     else
     {
@@ -190,8 +190,10 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
           [name] = true
         }
       }
-    }, cancellationToken).ConfigureAwait(false) ?? throw new InvalidOperationException($"Could not find container '{name}'");
+    }, cancellationToken).ConfigureAwait(false) ?? throw new ContainerEngineProvisionerException($"Could not find container '{name}'");
 
     return containers.FirstOrDefault()?.ID ?? string.Empty;
   }
 }
+
+
