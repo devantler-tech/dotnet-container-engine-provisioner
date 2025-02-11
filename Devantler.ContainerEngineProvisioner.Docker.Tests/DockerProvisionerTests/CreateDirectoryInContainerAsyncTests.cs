@@ -47,6 +47,7 @@ public class CreateDirectoryInContainerAsyncTests
 
     // Assert
     Assert.Null(await Record.ExceptionAsync(task));
+    // TODO: Verify the directory is created in the container
 
     // Cleanup
     await _dockerProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters

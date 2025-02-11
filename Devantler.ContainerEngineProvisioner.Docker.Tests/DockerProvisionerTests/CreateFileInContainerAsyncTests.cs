@@ -47,6 +47,7 @@ public class CreateFileInContainerAsyncTests
 
     // Assert
     Assert.Null(await Record.ExceptionAsync(task));
+    // TODO: Verify the file is created in the container, and the content is correct
 
     // Cleanup
     await _dockerProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters
