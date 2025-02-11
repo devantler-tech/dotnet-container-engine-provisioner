@@ -54,9 +54,5 @@ public class CreateFileInContainerAsyncTests
     {
       Force = true
     });
-    _ = await _dockerProvisioner.Client.Images.DeleteImageAsync(
-      "alpine:latest",
-      new ImageDeleteParameters()
-    );
   }
 }
