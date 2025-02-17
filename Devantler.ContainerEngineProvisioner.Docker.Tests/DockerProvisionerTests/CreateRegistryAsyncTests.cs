@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
@@ -14,6 +16,12 @@ public class CreateRegistryAsyncTests
   [Fact]
   public async Task CreateRegistryAsync_RegistryDoesNotExist_CreatesRegistry()
   {
+    //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+      return;
+    }
+
     // Arrange
     string registryName = "new_registry";
     int port = 5999;
@@ -36,6 +44,12 @@ public class CreateRegistryAsyncTests
   [Fact]
   public async Task CreateRegistryAsync_RegistryExists_DoesNotCreateRegistry()
   {
+    //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+      return;
+    }
+
     // Arrange
     string registryName = "new_registry";
     int port = 5999;
@@ -59,6 +73,12 @@ public class CreateRegistryAsyncTests
   [Fact]
   public async Task CreateRegistryAsync_ProxyUrlProvided_CreatesPullThroughRegistry()
   {
+    //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+      return;
+    }
+
     // Arrange
     string registryName = "new_registry";
     int port = 5999;
