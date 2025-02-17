@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
@@ -14,6 +16,12 @@ public class CheckReadyAsyncTests
   [Fact]
   public async Task CheckReadyAsync_ReturnsTrue_WhenDockerIsReady()
   {
+    //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+      return;
+    }
+
     // Act
     bool containerEngineIsReady = await _provisioner.CheckReadyAsync(CancellationToken.None);
 

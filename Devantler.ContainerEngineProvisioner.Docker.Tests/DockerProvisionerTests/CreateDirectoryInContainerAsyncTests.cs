@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Docker.DotNet.Models;
 
 namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
@@ -16,6 +17,12 @@ public class CreateDirectoryInContainerAsyncTests
   [Fact]
   public async Task CreateDirectoryInContainerAsync_ValidParameters_CreatesDirectory()
   {
+    //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+      return;
+    }
+
     // Arrange
     await _dockerProvisioner.Client.Images.CreateImageAsync(
       new ImagesCreateParameters
