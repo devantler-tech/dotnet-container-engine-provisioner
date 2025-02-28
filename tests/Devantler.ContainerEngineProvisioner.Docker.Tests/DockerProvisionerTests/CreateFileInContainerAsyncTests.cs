@@ -50,7 +50,7 @@ public class CreateFileInContainerAsyncTests
     await Task.Delay(5000);
 
     // Act
-    async Task task() => await _dockerProvisioner.CreateFileInContainerAsync(containerId, filePath, fileContent);
+    async Task task() => await _dockerProvisioner.CreateFileInContainerAsync(containerId, filePath, fileContent).ConfigureAwait(false);
 
     // Assert
     Assert.Null(await Record.ExceptionAsync(task));

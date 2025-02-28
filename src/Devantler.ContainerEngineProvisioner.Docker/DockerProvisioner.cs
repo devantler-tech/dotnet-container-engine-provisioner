@@ -12,7 +12,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// <summary>
   /// The Docker client.
   /// </summary>
-  public readonly DockerClient Client;
+  public DockerClient Client { get; }
 
   /// <summary>
   /// Initializes a new instance of the <see cref="DockerProvisioner"/> class.
@@ -123,7 +123,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       await Client.Images.CreateImageAsync(new ImagesCreateParameters
       {
         FromImage = "registry:2"
-      }, null, new Progress<JSONMessage>()).ConfigureAwait(false);
+      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
       registry = await Client.Containers.CreateContainerAsync(new CreateContainerParameters
       {
         Image = "registry:2",
@@ -152,8 +152,8 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       {
         $"REGISTRY_PROXY_REMOTEURL={proxyUrl}"
       } : null
-      }).ConfigureAwait(false);
-      _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters()).ConfigureAwait(false);
+      }, cancellationToken).ConfigureAwait(false);
+      _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters(), cancellationToken).ConfigureAwait(false);
     }
     catch (DockerApiException)
     {
