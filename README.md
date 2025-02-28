@@ -14,12 +14,14 @@ Simple provisioners that can provision various resources in container engines.
 .
 ├── .github
 │   └── workflows
-├── Devantler.ContainerEngineProvisioner.Core
-├── Devantler.ContainerEngineProvisioner.Docker
-└── Devantler.ContainerEngineProvisioner.Docker.Tests
-    └── DockerProvisionerTests
+├── src
+│   ├── Devantler.ContainerEngineProvisioner.Core
+│   └── Devantler.ContainerEngineProvisioner.Docker
+└── tests
+    └── Devantler.ContainerEngineProvisioner.Docker.Tests
+        └── DockerProvisionerTests
 
-7 directories
+9 directories
 ```
 <!-- readme-tree end -->
 
