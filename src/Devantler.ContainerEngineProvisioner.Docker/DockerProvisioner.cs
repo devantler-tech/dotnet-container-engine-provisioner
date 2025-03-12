@@ -83,6 +83,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       ],
     }, cancellationToken).ConfigureAwait(false);
     _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
+    await Task.Delay(100, cancellationToken).ConfigureAwait(false);
   }
 
   /// <summary>
