@@ -232,11 +232,11 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
         ["name"] = new Dictionary<string, bool>
         {
           [$"^{name}$"] = true
-      }
+        }
       }
     }, cancellationToken).ConfigureAwait(false) ?? throw new ContainerEngineProvisionerException($"Could not find container '{name}'");
 
-    return containers.FirstOrDefault()?.ID ?? string.Empty;
+    return containers.FirstOrDefault()?.ID ?? throw new ContainerEngineProvisionerException($"Could not find ID for container '{name}'");
   }
 }
 
