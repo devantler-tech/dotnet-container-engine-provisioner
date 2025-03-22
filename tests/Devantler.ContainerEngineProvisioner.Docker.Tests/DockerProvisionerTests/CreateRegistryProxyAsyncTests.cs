@@ -1,11 +1,12 @@
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
-/// Unit tests for <see cref="DockerProvisioner.CreateRegistryAsync(string, int, Uri?, CancellationToken)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
+/// Unit tests for <see cref="DockerProvisioner.CreateRegistryProxyAsync(string, int, ReadOnlyCollection{Uri}, CancellationToken)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
 /// </summary>
-public class CreateRegistryAsyncTests
+public class CreateRegistryProxyAsyncTests
 {
   readonly DockerProvisioner _provisioner = new();
 
@@ -14,7 +15,7 @@ public class CreateRegistryAsyncTests
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task CreateRegistryAsync_RegistryDoesNotExist_CreatesRegistry()
+  public async Task CreateRegistryProxyAsync_RegistryDoesNotExist_CreatesRegistry()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
     if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
@@ -23,12 +24,12 @@ public class CreateRegistryAsyncTests
     }
 
     // Arrange
-    string registryName = "registry";
-    int port = 5999;
+    string registryName = "docker-registry-proxy";
+    int port = 6999;
     var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryAsync(registryName, port, cancellationToken: cancellationToken);
+    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken);
 
     // Assert
     bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken: cancellationToken);
@@ -42,7 +43,7 @@ public class CreateRegistryAsyncTests
   /// Tests whether the registry is not created when it already exists.
   /// </summary>
   [Fact]
-  public async Task CreateRegistryAsync_RegistryExists_DoesNotCreateRegistry()
+  public async Task CreateRegistryProxyAsync_RegistryExists_DoesNotCreateRegistry()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
     if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
@@ -51,13 +52,13 @@ public class CreateRegistryAsyncTests
     }
 
     // Arrange
-    string registryName = "registry";
-    int port = 5999;
+    string registryName = "docker-registry-proxy";
+    int port = 6999;
     var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryAsync(registryName, port, cancellationToken: cancellationToken);
-    await _provisioner.CreateRegistryAsync(registryName, port, cancellationToken: cancellationToken);
+    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken);
+    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken);
 
     // Assert
     bool registry1Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
@@ -65,34 +66,5 @@ public class CreateRegistryAsyncTests
     Assert.True(registry1Exists);
     bool registry2Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
     Assert.False(registry2Exists);
-  }
-
-  /// <summary>
-  /// Tests whether a pull-through registry is created when a proxy URL is provided.
-  /// </summary>
-  [Fact]
-  public async Task CreateRegistryAsync_ProxyUrlProvided_CreatesPullThroughRegistry()
-  {
-    //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
-    if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-    {
-      return;
-    }
-
-    // Arrange
-    string registryName = "registry";
-    int port = 5999;
-    var cancellationToken = CancellationToken.None;
-    Uri proxyUrl = new("http://proxy:8080");
-
-    // Act
-    await _provisioner.CreateRegistryAsync(registryName, port, proxyUrl, cancellationToken);
-
-    // Assert
-    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
-    Assert.True(registryExists);
-
-    // Cleanup
-    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken);
   }
 }

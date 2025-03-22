@@ -1,4 +1,6 @@
-﻿namespace Devantler.ContainerEngineProvisioner.Core;
+﻿using System.Collections.ObjectModel;
+
+namespace Devantler.ContainerEngineProvisioner.Core;
 
 /// <summary>
 /// A container engine provisioner capable of modifying resources in a container engine.
@@ -12,13 +14,22 @@ public interface IContainerEngineProvisioner
   Task<bool> CheckReadyAsync(CancellationToken cancellationToken = default);
 
   /// <summary>
-  /// Creates a registry in the container engine.
+  /// Creates a 'docker.io/registry' in the container engine.
   /// </summary>
   /// <param name="name"></param>
   /// <param name="port"></param>
   /// <param name="proxyUrl"></param>
   /// <param name="cancellationToken"></param>
   Task CreateRegistryAsync(string name, int port, Uri? proxyUrl = default, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Creates a 'rpardini/docker-registry-proxy' in the container engine.
+  /// </summary>
+  /// <param name="name"></param>
+  /// <param name="port"></param>
+  /// <param name="proxyUrls"></param>
+  /// <param name="cancellationToken"></param>
+  Task CreateRegistryProxyAsync(string name, int port, ReadOnlyCollection<Uri> proxyUrls, CancellationToken cancellationToken = default);
 
   /// <summary>
   /// Deletes a registry in the container engine.
