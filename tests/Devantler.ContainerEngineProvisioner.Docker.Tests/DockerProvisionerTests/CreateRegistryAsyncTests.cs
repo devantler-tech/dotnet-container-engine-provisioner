@@ -17,7 +17,7 @@ public class CreateRegistryAsyncTests
   public async Task CreateRegistryAsync_RegistryDoesNotExist_CreatesRegistry()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
     {
       return;
     }

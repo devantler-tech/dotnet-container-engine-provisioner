@@ -231,8 +231,8 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       {
         ["name"] = new Dictionary<string, bool>
         {
-          [name] = true
-        }
+          [$"^{name}$"] = true
+      }
       }
     }, cancellationToken).ConfigureAwait(false) ?? throw new ContainerEngineProvisionerException($"Could not find container '{name}'");
 
