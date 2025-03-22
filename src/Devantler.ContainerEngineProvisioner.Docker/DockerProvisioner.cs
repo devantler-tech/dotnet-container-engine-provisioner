@@ -208,17 +208,17 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// <inheritdoc/>
   public async Task DeleteRegistryAsync(string name, CancellationToken cancellationToken = default)
   {
-    string containerId = await GetContainerIdAsync(name, cancellationToken).ConfigureAwait(false);
-
-    if (string.IsNullOrEmpty(containerId))
+    string containerId;
+    try
     {
-      throw new ContainerEngineProvisionerException($"Could not find registry '{name}'");
+      containerId = await GetContainerIdAsync(name, cancellationToken).ConfigureAwait(false);
     }
-    else
+    catch (ContainerEngineProvisionerException)
     {
-      _ = await Client.Containers.StopContainerAsync(containerId, new ContainerStopParameters(), cancellationToken).ConfigureAwait(false);
-      await Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters(), cancellationToken).ConfigureAwait(false);
+      return;
     }
+    _ = await Client.Containers.StopContainerAsync(containerId, new ContainerStopParameters(), cancellationToken).ConfigureAwait(false);
+    await Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters(), cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc/>
