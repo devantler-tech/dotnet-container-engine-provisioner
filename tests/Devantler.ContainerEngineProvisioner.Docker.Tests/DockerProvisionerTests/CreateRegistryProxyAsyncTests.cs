@@ -24,8 +24,8 @@ public class CreateRegistryProxyAsyncTests
     }
 
     // Arrange
-    string registryName = "new_registry";
-    int port = 5999;
+    string registryName = "docker-registry-proxy";
+    int port = 6999;
     var cancellationToken = CancellationToken.None;
 
     // Act
@@ -52,8 +52,8 @@ public class CreateRegistryProxyAsyncTests
     }
 
     // Arrange
-    string registryName = "new_registry";
-    int port = 5999;
+    string registryName = "docker-registry-proxy";
+    int port = 6999;
     var cancellationToken = CancellationToken.None;
 
     // Act

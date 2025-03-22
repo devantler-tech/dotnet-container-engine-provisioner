@@ -23,7 +23,7 @@ public class CreateRegistryAsyncTests
     }
 
     // Arrange
-    string registryName = "new_registry";
+    string registryName = "registry";
     int port = 5999;
     var cancellationToken = CancellationToken.None;
 
@@ -51,7 +51,7 @@ public class CreateRegistryAsyncTests
     }
 
     // Arrange
-    string registryName = "new_registry";
+    string registryName = "registry";
     int port = 5999;
     var cancellationToken = CancellationToken.None;
 
@@ -80,7 +80,7 @@ public class CreateRegistryAsyncTests
     }
 
     // Arrange
-    string registryName = "new_registry";
+    string registryName = "registry";
     int port = 5999;
     var cancellationToken = CancellationToken.None;
     Uri proxyUrl = new("http://proxy:8080");
