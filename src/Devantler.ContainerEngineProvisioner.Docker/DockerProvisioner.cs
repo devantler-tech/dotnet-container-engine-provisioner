@@ -1,4 +1,5 @@
-﻿using Devantler.ContainerEngineProvisioner.Core;
+﻿using System.Collections.ObjectModel;
+using Devantler.ContainerEngineProvisioner.Core;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
@@ -118,48 +119,90 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     {
       return;
     }
-    CreateContainerResponse registry;
-    try
+
+    await Client.Images.CreateImageAsync(new ImagesCreateParameters
     {
-      await Client.Images.CreateImageAsync(new ImagesCreateParameters
+      FromImage = "registry:2"
+    }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+
+    var createContainerParameters = new CreateContainerParameters
+    {
+      Image = "registry:2",
+      Name = name,
+      HostConfig = new HostConfig
       {
-        FromImage = "registry:2"
-      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
-      registry = await Client.Containers.CreateContainerAsync(new CreateContainerParameters
-      {
-        Image = "registry:2",
-        Name = name,
-        HostConfig = new HostConfig
+        PortBindings = new Dictionary<string, IList<PortBinding>>
         {
-          PortBindings = new Dictionary<string, IList<PortBinding>>
-          {
-            ["5000/tcp"] =
+          ["5000/tcp"] =
           [
             new() {
               HostPort = $"{port}"
             }
           ]
-          },
-          RestartPolicy = new RestartPolicy
-          {
-            Name = RestartPolicyKind.Always
-          },
-          Binds =
+        },
+        RestartPolicy = new RestartPolicy
+        {
+          Name = RestartPolicyKind.Always
+        },
+        Binds =
           [
             $"{name}:/var/lib/registry"
           ]
-        },
-        Env = proxyUrl != null ? new List<string>
+      },
+      Env = proxyUrl != null ? new List<string>
       {
         $"REGISTRY_PROXY_REMOTEURL={proxyUrl}"
       } : null
-      }, cancellationToken).ConfigureAwait(false);
-      _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters(), cancellationToken).ConfigureAwait(false);
-    }
-    catch (DockerApiException)
+    };
+    var registry = await Client.Containers.CreateContainerAsync(createContainerParameters, cancellationToken).ConfigureAwait(false);
+    _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters(), cancellationToken).ConfigureAwait(false);
+  }
+
+  /// <inheritdoc/>
+  public async Task CreateRegistryProxyAsync(string name, int port, ReadOnlyCollection<Uri> proxyUrls, CancellationToken cancellationToken = default)
+  {
+    bool registryExists = await CheckContainerExistsAsync(name, cancellationToken).ConfigureAwait(false);
+
+    if (registryExists)
     {
-      throw;
+      return;
     }
+
+    await Client.Images.CreateImageAsync(new ImagesCreateParameters
+    {
+      FromImage = "rpardini/docker-registry-proxy:0.6.5",
+    }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+
+    var createContainerParameters = new CreateContainerParameters
+    {
+      Image = "rpardini/docker-registry-proxy:0.6.5",
+      Name = name,
+      HostConfig = new HostConfig
+      {
+        PortBindings = new Dictionary<string, IList<PortBinding>>
+        {
+          ["3128/tcp"] =
+        [
+        new() {
+          HostPort = $"{port}"
+        }
+        ]
+        },
+        Binds =
+        [
+        $"{name}:/docker_mirror_cache",
+        $"{name}_ca:/ca"
+        ]
+      },
+      Env =
+      [
+      "ENABLE_MANIFEST_CACHE=true",
+      $"REGISTRIES={string.Join(" ", proxyUrls.Select(url => url.Host.Contains("docker.io", StringComparison.OrdinalIgnoreCase) ? "docker.io" : url.Host))}",
+      ]
+    };
+
+    var registry = await Client.Containers.CreateContainerAsync(createContainerParameters, cancellationToken).ConfigureAwait(false);
+    _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters(), cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc/>
