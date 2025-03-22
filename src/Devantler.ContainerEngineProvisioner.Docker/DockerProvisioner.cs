@@ -42,7 +42,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       {
         ["name"] = new Dictionary<string, bool>
         {
-          [name] = true
+          [$"^{name}$"] = true
         }
       }
     }, cancellationToken).ConfigureAwait(false);
