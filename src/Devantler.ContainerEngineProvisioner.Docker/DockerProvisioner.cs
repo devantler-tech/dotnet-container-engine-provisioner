@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using Devantler.ContainerEngineProvisioner.Core;
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -251,11 +251,6 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     string containerId = await GetContainerIdAsync(containerName, cancellationToken).ConfigureAwait(false);
     var networks = await Client.Networks.ListNetworksAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
     var network = networks.FirstOrDefault(x => x.Name == networkName) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkName}'");
-    if (network.Containers.Values.Any(x => x.Name == containerName))
-    {
-      // The container is already connected to the network
-      return;
-    }
     await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
     {
       Container = containerId
@@ -275,11 +270,6 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     var container = await Client.Containers.InspectContainerAsync(containerId, cancellationToken).ConfigureAwait(false);
     var networks = await Client.Networks.ListNetworksAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
     var network = networks.FirstOrDefault(x => x.ID == networkId) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkId}'");
-    if (network.Containers.Values.Any(x => x.Name == container.Name))
-    {
-      // The container is already connected to the network
-      return;
-    }
     await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
     {
       Container = containerId
