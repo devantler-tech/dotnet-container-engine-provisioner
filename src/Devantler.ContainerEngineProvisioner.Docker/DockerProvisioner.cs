@@ -253,6 +253,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     var network = networks.FirstOrDefault(x => x.Name == networkName) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkName}'");
     if (network.Containers.Values.Any(x => x.Name == containerName))
     {
+      // The container is already connected to the network
       return;
     }
     await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
@@ -276,6 +277,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     var network = networks.FirstOrDefault(x => x.ID == networkId) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkId}'");
     if (network.Containers.Values.Any(x => x.Name == container.Name))
     {
+      // The container is already connected to the network
       return;
     }
     await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
