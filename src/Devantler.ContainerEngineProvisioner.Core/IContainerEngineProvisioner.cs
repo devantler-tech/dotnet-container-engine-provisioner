@@ -59,4 +59,18 @@ public interface IContainerEngineProvisioner
   /// Create a file in a container.
   /// </summary>
   Task CreateFileInContainerAsync(string containerId, string path, string content, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Connects a container to a network by name.
+  /// </summary>
+  Task ConnectContainerToNetworkByNameAsync(string containerName, string networkName, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Connects a container to a network by ID.
+  /// </summary>
+  /// <param name="containerId"></param>
+  /// <param name="networkId"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  Task ConnectContainerToNetworkByIdAsync(string containerId, string networkId, CancellationToken cancellationToken = default);
 }
