@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using Devantler.ContainerEngineProvisioner.Core;
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -237,6 +237,43 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     }, cancellationToken).ConfigureAwait(false) ?? throw new ContainerEngineProvisionerException($"Could not find container '{name}'");
 
     return containers.FirstOrDefault()?.ID ?? throw new ContainerEngineProvisionerException($"Could not find ID for container '{name}'");
+  }
+
+  /// <summary>
+  /// Connects a container to a network.
+  /// </summary>
+  /// <param name="containerName"></param>
+  /// <param name="networkName"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  public async Task ConnectContainerToNetworkByNameAsync(string containerName, string networkName, CancellationToken cancellationToken = default)
+  {
+    string containerId = await GetContainerIdAsync(containerName, cancellationToken).ConfigureAwait(false);
+    var networks = await Client.Networks.ListNetworksAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+    var network = networks.FirstOrDefault(x => x.Name == networkName) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkName}'");
+    await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
+    {
+      Container = containerId
+    }, cancellationToken).ConfigureAwait(false);
+  }
+
+  /// <summary>
+  /// Connects a container to a network by ID.
+  /// </summary>
+  /// <param name="containerId"></param>
+  /// <param name="networkId"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  /// <exception cref="ContainerEngineProvisionerException"></exception>
+  public async Task ConnectContainerToNetworkByIdAsync(string containerId, string networkId, CancellationToken cancellationToken = default)
+  {
+    var container = await Client.Containers.InspectContainerAsync(containerId, cancellationToken).ConfigureAwait(false);
+    var networks = await Client.Networks.ListNetworksAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+    var network = networks.FirstOrDefault(x => x.ID == networkId) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkId}'");
+    await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
+    {
+      Container = containerId
+    }, cancellationToken).ConfigureAwait(false);
   }
 }
 
