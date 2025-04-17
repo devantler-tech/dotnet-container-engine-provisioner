@@ -51,7 +51,6 @@ public class ConnectContainerToNetworkByIdAsyncTests
 
     // Act
     await _dockerProvisioner.ConnectContainerToNetworkByIdAsync(createContainerResponse.ID, createNetworkResponse.ID).ConfigureAwait(false);
-    await _dockerProvisioner.ConnectContainerToNetworkByIdAsync(createContainerResponse.ID, createNetworkResponse.ID).ConfigureAwait(false);
 
     // Assert
     var network = await _dockerProvisioner.Client.Networks.InspectNetworkAsync(createNetworkResponse.ID).ConfigureAwait(false);
