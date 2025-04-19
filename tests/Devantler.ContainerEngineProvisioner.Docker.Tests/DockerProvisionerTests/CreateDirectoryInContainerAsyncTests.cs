@@ -50,7 +50,7 @@ public class CreateDirectoryInContainerAsyncTests
     await Task.Delay(5000);
 
     // Act
-    await _dockerProvisioner.CreateDirectoryInContainerAsync(containerId, path, recursive).ConfigureAwait(false);
+    await _dockerProvisioner.CreateDirectoryInContainerAsync(containerId, path, recursive);
     var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
     {
       AttachStdout = true,
