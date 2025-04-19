@@ -51,6 +51,9 @@ public class CreateDirectoryInContainerAsyncTests
 
     // Act
     async Task task() => await _dockerProvisioner.CreateDirectoryInContainerAsync(containerId, path, recursive).ConfigureAwait(false);
+
+    // Assert
+    Assert.Null(await Record.ExceptionAsync(task));
     var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
     {
       AttachStdout = true,
@@ -61,9 +64,6 @@ public class CreateDirectoryInContainerAsyncTests
     using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false);
     var (stdout, _) = await execStream.ReadOutputToEndAsync(default);
     string output = stdout;
-
-    // Assert
-    Assert.Null(await Record.ExceptionAsync(task));
     Assert.Equal("Directory exists", output.Trim());
 
     // Cleanup

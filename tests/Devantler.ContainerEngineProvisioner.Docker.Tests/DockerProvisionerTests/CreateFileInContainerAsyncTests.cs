@@ -51,7 +51,9 @@ public class CreateFileInContainerAsyncTests
 
     // Act
     async Task task() => await _dockerProvisioner.CreateFileInContainerAsync(containerId, filePath, fileContent).ConfigureAwait(false);
-    // Check if the file exists
+
+    // Assert
+    Assert.Null(await Record.ExceptionAsync(task));
     var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
     {
       AttachStdout = true,
@@ -61,9 +63,6 @@ public class CreateFileInContainerAsyncTests
     using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false);
     var output = await execStream.ReadOutputToEndAsync(CancellationToken.None);
     string stdout = output.stdout;
-
-    // Assert
-    Assert.Null(await Record.ExceptionAsync(task));
     Assert.Equal("File exists", stdout.Trim());
 
     // Cleanup
