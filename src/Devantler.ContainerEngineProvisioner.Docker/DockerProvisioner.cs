@@ -85,10 +85,10 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       ],
       AttachStdin = true,
       AttachStdout = true,
-      AttachStderr = true
+      AttachStderr = true,
+      Detach = false
     }, cancellationToken).ConfigureAwait(false);
-    _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
-    _ = await Client.Containers.WaitContainerAsync(containerId, cancellationToken).ConfigureAwait(false);
+    await Client.Exec.StartContainerExecAsync(execResponse.ID, cancellationToken).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -112,10 +112,10 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       ],
       AttachStdin = true,
       AttachStdout = true,
-      AttachStderr = true
+      AttachStderr = true,
+      Detach = false
     }, cancellationToken).ConfigureAwait(false);
-    _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
-    _ = await Client.Containers.WaitContainerAsync(containerId, cancellationToken).ConfigureAwait(false);
+    await Client.Exec.StartContainerExecAsync(execResponse.ID, cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc/>
