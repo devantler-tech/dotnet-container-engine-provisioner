@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using Devantler.ContainerEngineProvisioner.Core;
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -19,7 +18,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// <summary>
   /// Initializes a new instance of the <see cref="DockerProvisioner"/> class.
   /// </summary>
-  public DockerProvisioner(string dockerSocket)
+  public DockerProvisioner(string? dockerSocket = default)
   {
     string dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:///var/run/docker.sock";
     dockerSocket = !string.IsNullOrEmpty(dockerSocket) ? dockerSocket : dockerHost;
