@@ -19,10 +19,11 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// <summary>
   /// Initializes a new instance of the <see cref="DockerProvisioner"/> class.
   /// </summary>
-  public DockerProvisioner()
+  public DockerProvisioner(string dockerSocket)
   {
-    string dockerSocket = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:///var/run/docker.sock";
-    using var uriConfig = new DockerClientConfiguration(new Uri(podmanSocket));
+    string dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:///var/run/docker.sock";
+    dockerSocket = !string.IsNullOrEmpty(dockerSocket) ? dockerSocket : dockerHost;
+    using var uriConfig = new DockerClientConfiguration(new Uri(dockerSocket));
     Client = uriConfig.CreateClient();
   }
 
