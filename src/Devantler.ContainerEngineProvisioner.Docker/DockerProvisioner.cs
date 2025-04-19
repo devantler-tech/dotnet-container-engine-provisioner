@@ -21,12 +21,12 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// </summary>
   public DockerProvisioner()
   {
-    string dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:/var/run/docker.sock";
+    string dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:///var/run/docker.sock";
     string podmanSocket = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && File.Exists(@"\\.\pipe\docker_engine") ?
       "npipe://./pipe/docker_engine" : File.Exists($"/run/podman/podman.sock") ?
-      $"unix:/run/podman/podman.sock" : File.Exists($"/run/user/{Environment.GetEnvironmentVariable("EUID")}/podman/podman.sock") ?
-      $"unix:/run/user/{Environment.GetEnvironmentVariable("EUID")}/podman/podman.sock" : File.Exists($"/run/user/{Environment.GetEnvironmentVariable("UID")}/podman/podman.sock") ?
-      $"unix:/run/user/{Environment.GetEnvironmentVariable("UID")}/podman/podman.sock" : dockerHost;
+      $"unix:///run/podman/podman.sock" : File.Exists($"/run/user/{Environment.GetEnvironmentVariable("EUID")}/podman/podman.sock") ?
+      $"unix:///run/user/{Environment.GetEnvironmentVariable("EUID")}/podman/podman.sock" : File.Exists($"/run/user/{Environment.GetEnvironmentVariable("UID")}/podman/podman.sock") ?
+      $"unix:///run/user/{Environment.GetEnvironmentVariable("UID")}/podman/podman.sock" : dockerHost;
 
     using var uriConfig = new DockerClientConfiguration(new Uri(podmanSocket));
     Client = uriConfig.CreateClient();
