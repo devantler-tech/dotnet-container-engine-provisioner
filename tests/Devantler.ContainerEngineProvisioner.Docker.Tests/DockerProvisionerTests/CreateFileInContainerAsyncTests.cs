@@ -54,7 +54,16 @@ public class CreateFileInContainerAsyncTests
 
     // Assert
     Assert.Null(await Record.ExceptionAsync(task));
-    // TODO: Verify the file is created in the container, and the content is correct
+    var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
+    {
+      AttachStdout = true,
+      AttachStderr = true,
+      Cmd = ["sh", "-c", $"if [ -f \"{filePath}\" ]; then echo \"File exists\"; else echo \"File does not exist\"; fi"]
+    });
+    using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false);
+    var output = await execStream.ReadOutputToEndAsync(CancellationToken.None);
+    string stdout = output.stdout;
+    Assert.Equal("File exists", stdout.Trim());
 
     // Cleanup
     await _dockerProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters

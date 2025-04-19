@@ -54,7 +54,17 @@ public class CreateDirectoryInContainerAsyncTests
 
     // Assert
     Assert.Null(await Record.ExceptionAsync(task));
-    // TODO: Verify the directory is created in the container
+    var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
+    {
+      AttachStdout = true,
+      AttachStderr = true,
+      Cmd = ["sh", "-c", $"if [ -d \"{path}\" ]; then echo \"Directory exists\"; else echo \"Directory does not exist\"; fi"]
+    });
+
+    using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false);
+    var (stdout, _) = await execStream.ReadOutputToEndAsync(default);
+    string output = stdout;
+    Assert.Equal("Directory exists", output.Trim());
 
     // Cleanup
     await _dockerProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters
