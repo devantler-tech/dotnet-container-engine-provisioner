@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 
 namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
@@ -14,14 +13,14 @@ public class CreateRegistryProxyAsyncTests
   /// Tests whether the registry is created when it does not exist.
   /// </summary>
   /// <returns></returns>
-  [Fact]
+  [SkippableFact]
   public async Task CreateRegistryProxyAsync_RegistryDoesNotExist_CreatesRegistry()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
-    if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-    {
-      return;
-    }
+    Skip.If(
+      (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true",
+      "Skipping test on Windows and MacOS in GitHub Actions."
+    );
 
     // Arrange
     string registryName = "docker-registry-proxy";
@@ -29,27 +28,27 @@ public class CreateRegistryProxyAsyncTests
     var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken);
+    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
 
     // Assert
-    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken: cancellationToken);
+    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken: cancellationToken).ConfigureAwait(false);
     Assert.True(registryExists);
 
     // Cleanup
-    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken: cancellationToken);
+    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken: cancellationToken).ConfigureAwait(false);
   }
 
   /// <summary>
   /// Tests whether the registry is not created when it already exists.
   /// </summary>
-  [Fact]
+  [SkippableFact]
   public async Task CreateRegistryProxyAsync_RegistryExists_DoesNotCreateRegistry()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
-    if ((RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-    {
-      return;
-    }
+    Skip.If(
+      (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()) && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true",
+      "Skipping test on Windows and MacOS in GitHub Actions."
+    );
 
     // Arrange
     string registryName = "docker-registry-proxy";
@@ -57,14 +56,14 @@ public class CreateRegistryProxyAsyncTests
     var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken);
-    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken);
+    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
+    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
 
     // Assert
-    bool registry1Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
-    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken);
+    bool registry1Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken).ConfigureAwait(false);
+    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken).ConfigureAwait(false);
     Assert.True(registry1Exists);
-    bool registry2Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken);
+    bool registry2Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken).ConfigureAwait(false);
     Assert.False(registry2Exists);
   }
 }

@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using Devantler.ContainerEngineProvisioner.Core;
 using Docker.DotNet;
 using Docker.DotNet.Models;
@@ -19,17 +18,19 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// <summary>
   /// Initializes a new instance of the <see cref="DockerProvisioner"/> class.
   /// </summary>
-  public DockerProvisioner()
+  public DockerProvisioner(string? dockerSocket = default)
   {
-    string dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:/var/run/docker.sock";
-    string podmanSocket = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && File.Exists(@"\\.\pipe\docker_engine") ?
-      "npipe://./pipe/docker_engine" : File.Exists($"/run/podman/podman.sock") ?
-      $"unix:/run/podman/podman.sock" : File.Exists($"/run/user/{Environment.GetEnvironmentVariable("EUID")}/podman/podman.sock") ?
-      $"unix:/run/user/{Environment.GetEnvironmentVariable("EUID")}/podman/podman.sock" : File.Exists($"/run/user/{Environment.GetEnvironmentVariable("UID")}/podman/podman.sock") ?
-      $"unix:/run/user/{Environment.GetEnvironmentVariable("UID")}/podman/podman.sock" : dockerHost;
-
-    using var uriConfig = new DockerClientConfiguration(new Uri(podmanSocket));
-    Client = uriConfig.CreateClient();
+    string? dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST");
+    dockerSocket = !string.IsNullOrEmpty(dockerSocket) ? dockerSocket : dockerHost;
+    if (!string.IsNullOrEmpty(dockerSocket))
+    {
+      var uri = new Uri(dockerSocket);
+      using var uriConfig = new DockerClientConfiguration(uri);
+      Client = uriConfig.CreateClient();
+      return;
+    }
+    using var defaultConfig = new DockerClientConfiguration();
+    Client = defaultConfig.CreateClient();
   }
 
   /// <inheritdoc/>
@@ -84,10 +85,10 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       ],
       AttachStdin = true,
       AttachStdout = true,
-      AttachStderr = true
+      AttachStderr = true,
+      Detach = false
     }, cancellationToken).ConfigureAwait(false);
-    _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
-    await Task.Delay(100, cancellationToken).ConfigureAwait(false);
+    await Client.Exec.StartContainerExecAsync(execResponse.ID, cancellationToken).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -111,9 +112,10 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       ],
       AttachStdin = true,
       AttachStdout = true,
-      AttachStderr = true
+      AttachStderr = true,
+      Detach = false
     }, cancellationToken).ConfigureAwait(false);
-    _ = await Client.Exec.StartAndAttachContainerExecAsync(execResponse.ID, true, cancellationToken).ConfigureAwait(false);
+    await Client.Exec.StartContainerExecAsync(execResponse.ID, cancellationToken).ConfigureAwait(false);
   }
 
   /// <inheritdoc/>
