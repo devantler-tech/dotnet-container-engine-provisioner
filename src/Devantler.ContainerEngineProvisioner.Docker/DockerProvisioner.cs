@@ -20,10 +20,17 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   /// </summary>
   public DockerProvisioner(string? dockerSocket = default)
   {
-    string dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST") ?? "unix:///var/run/docker.sock";
+    string? dockerHost = Environment.GetEnvironmentVariable("DOCKER_HOST");
     dockerSocket = !string.IsNullOrEmpty(dockerSocket) ? dockerSocket : dockerHost;
-    using var uriConfig = new DockerClientConfiguration(new Uri(dockerSocket));
-    Client = uriConfig.CreateClient();
+    if (!string.IsNullOrEmpty(dockerSocket))
+    {
+      var uri = new Uri(dockerSocket);
+      using var uriConfig = new DockerClientConfiguration(uri);
+      Client = uriConfig.CreateClient();
+      return;
+    }
+    using var defaultConfig = new DockerClientConfiguration();
+    Client = defaultConfig.CreateClient();
   }
 
   /// <inheritdoc/>
