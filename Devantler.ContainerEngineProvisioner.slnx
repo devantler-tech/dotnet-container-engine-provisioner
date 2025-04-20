@@ -7,8 +7,10 @@
   <Folder Name="/src/">
     <Project Path="src/Devantler.ContainerEngineProvisioner.Core/Devantler.ContainerEngineProvisioner.Core.csproj" />
     <Project Path="src/Devantler.ContainerEngineProvisioner.Docker/Devantler.ContainerEngineProvisioner.Docker.csproj" />
+    <Project Path="src/Devantler.ContainerEngineProvisioner.Podman/Devantler.ContainerEngineProvisioner.Podman.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Devantler.ContainerEngineProvisioner.Docker.Tests/Devantler.ContainerEngineProvisioner.Docker.Tests.csproj" />
+    <Project Path="tests/Devantler.ContainerEngineProvisioner.Podman.Tests/Devantler.ContainerEngineProvisioner.Podman.Tests.csproj" />
   </Folder>
 </Solution>

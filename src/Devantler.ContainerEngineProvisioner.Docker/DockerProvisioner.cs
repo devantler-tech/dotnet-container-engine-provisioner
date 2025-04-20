@@ -258,7 +258,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
   {
     string containerId = await GetContainerIdAsync(containerName, cancellationToken).ConfigureAwait(false);
     var networks = await Client.Networks.ListNetworksAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
-    var network = networks.FirstOrDefault(x => x.Name == networkName) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkName}'");
+    var network = networks.FirstOrDefault(x => x.Name.Equals(networkName, StringComparison.Ordinal)) ?? throw new ContainerEngineProvisionerException($"Could not find network '{networkName}'");
     await Client.Networks.ConnectNetworkAsync(network.ID, new NetworkConnectParameters
     {
       Container = containerId
