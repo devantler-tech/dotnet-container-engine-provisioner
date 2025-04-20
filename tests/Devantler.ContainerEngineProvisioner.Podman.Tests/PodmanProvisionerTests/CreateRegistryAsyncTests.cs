@@ -1,11 +1,11 @@
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
-/// Unit tests for <see cref="DockerProvisioner.CreateRegistryAsync(string, int, Uri?, CancellationToken)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
+/// Unit tests for <see cref="PodmanProvisioner.CreateRegistryAsync(string, int, Uri?, CancellationToken)"/> and <see cref="PodmanProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
 /// </summary>
 public class CreateRegistryAsyncTests
 {
-  readonly DockerProvisioner _provisioner = new();
+  readonly PodmanProvisioner _provisioner = new();
 
   /// <summary>
   /// Tests whether the registry is created when it does not exist.
@@ -21,7 +21,7 @@ public class CreateRegistryAsyncTests
     );
 
     // Arrange
-    string registryName = "registry_docker";
+    string registryName = "registry_podman";
     int port = 5999;
     var cancellationToken = CancellationToken.None;
 
@@ -49,7 +49,7 @@ public class CreateRegistryAsyncTests
     );
 
     // Arrange
-    string registryName = "registry_docker";
+    string registryName = "registry_podman";
     int port = 5999;
     var cancellationToken = CancellationToken.None;
 
@@ -78,7 +78,7 @@ public class CreateRegistryAsyncTests
     );
 
     // Arrange
-    string registryName = "registry_docker";
+    string registryName = "registry_podman";
     int port = 5999;
     var cancellationToken = CancellationToken.None;
     Uri proxyUrl = new("http://proxy:8080");

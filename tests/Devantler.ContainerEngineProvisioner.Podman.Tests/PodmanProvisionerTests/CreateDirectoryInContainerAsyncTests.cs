@@ -1,16 +1,16 @@
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
-/// Tests for <see cref="DockerProvisioner"/>.
+/// Tests for <see cref="PodmanProvisioner"/>.
 /// </summary>
 public class CreateDirectoryInContainerAsyncTests
 {
-  readonly DockerProvisioner _dockerProvisioner = new();
+  readonly PodmanProvisioner _dockerProvisioner = new();
 
   /// <summary>
-  /// Tests the <see cref="DockerProvisioner.CreateDirectoryInContainerAsync(string, string, bool, CancellationToken)"/> creates a directory in a container.
+  /// Tests the <see cref="PodmanProvisioner.CreateDirectoryInContainerAsync(string, string, bool, CancellationToken)"/> creates a directory in a container.
   /// </summary>
   /// <returns></returns>
   [SkippableFact]
@@ -35,7 +35,7 @@ public class CreateDirectoryInContainerAsyncTests
     {
       Image = "alpine:latest",
       Cmd = ["sleep", "inf"],
-      Name = "create_directory_test_docker"
+      Name = "create_directory_test_podman"
     }).ConfigureAwait(false);
     _ = await _dockerProvisioner.Client.Containers.StartContainerAsync(
       createContainerResponse.ID,

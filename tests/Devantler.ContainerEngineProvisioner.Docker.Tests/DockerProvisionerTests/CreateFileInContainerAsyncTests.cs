@@ -35,7 +35,7 @@ public class CreateFileInContainerAsyncTests
     {
       Image = "alpine:latest",
       Cmd = ["sleep", "inf"],
-      Name = "create_file_test"
+      Name = "create_file_test_docker"
     }).ConfigureAwait(false);
     _ = await _dockerProvisioner.Client.Containers.StartContainerAsync(
       createContainerResponse.ID,

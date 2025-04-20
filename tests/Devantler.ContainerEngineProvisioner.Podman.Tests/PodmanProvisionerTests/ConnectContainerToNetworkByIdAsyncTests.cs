@@ -1,16 +1,16 @@
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
-/// Unit tests for <see cref="DockerProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/>.
+/// Unit tests for <see cref="PodmanProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/>.
 /// </summary>
 public class ConnectContainerToNetworkByIdAsyncTests
 {
-  readonly DockerProvisioner _dockerProvisioner = new();
+  readonly PodmanProvisioner _dockerProvisioner = new();
 
   /// <summary>
-  /// Tests the <see cref="DockerProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/> method.
+  /// Tests the <see cref="PodmanProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/> method.
   /// </summary>
   /// <returns></returns>
   [SkippableFact]
@@ -23,8 +23,8 @@ public class ConnectContainerToNetworkByIdAsyncTests
     );
 
     // Arrange
-    string containerName = "connect_container_to_network_by_id_test_docker";
-    string networkName = "test_network_by_id_docker";
+    string containerName = "connect_container_to_network_by_id_test_podman";
+    string networkName = "test_network_by_id_podman";
     await _dockerProvisioner.Client.Images.CreateImageAsync(
       new ImagesCreateParameters
       {

@@ -1,20 +1,20 @@
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
-/// Unit tests for <see cref="DockerProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/>.
+/// Unit tests for <see cref="PodmanProvisioner.ConnectContainerToNetworkByNameAsync(string, string, CancellationToken)"/>.
 /// </summary>
-public class ConnectContainerToNetworkByIdAsyncTests
+public class ConnectContainerToNetworkByNameAsyncTests
 {
-  readonly DockerProvisioner _dockerProvisioner = new();
+  readonly PodmanProvisioner _dockerProvisioner = new();
 
   /// <summary>
-  /// Tests the <see cref="DockerProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/> method.
+  /// Tests the <see cref="PodmanProvisioner.ConnectContainerToNetworkByNameAsync(string, string, CancellationToken)"/> method.
   /// </summary>
   /// <returns></returns>
   [SkippableFact]
-  public async Task ConnectContainerToNetworkByIdAsync_WhenCalled_ConnectsContainerToNetwork()
+  public async Task ConnectContainerToNetworkByNameAsync_WhenCalled_ConnectsContainerToNetwork()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
     Skip.If(
@@ -23,8 +23,8 @@ public class ConnectContainerToNetworkByIdAsyncTests
     );
 
     // Arrange
-    string containerName = "connect_container_to_network_by_id_test_docker";
-    string networkName = "test_network_by_id_docker";
+    string containerName = "connect_container_to_network_by_name_test_podman";
+    string networkName = "test_network_by_name_podman";
     await _dockerProvisioner.Client.Images.CreateImageAsync(
       new ImagesCreateParameters
       {
@@ -50,11 +50,11 @@ public class ConnectContainerToNetworkByIdAsyncTests
     }).ConfigureAwait(false);
 
     // Act
-    await _dockerProvisioner.ConnectContainerToNetworkByIdAsync(createContainerResponse.ID, createNetworkResponse.ID).ConfigureAwait(false);
+    await _dockerProvisioner.ConnectContainerToNetworkByNameAsync(containerName, networkName).ConfigureAwait(false);
 
     // Assert
     var network = await _dockerProvisioner.Client.Networks.InspectNetworkAsync(createNetworkResponse.ID).ConfigureAwait(false);
-    var container = network.Containers.FirstOrDefault(c => c.Key == createContainerResponse.ID);
+    var container = network.Containers.FirstOrDefault(c => c.Value.Name == containerName);
     Assert.NotNull(network);
     Assert.Equal(networkName, network.Name);
     Assert.Equal(createNetworkResponse.ID, network.ID);

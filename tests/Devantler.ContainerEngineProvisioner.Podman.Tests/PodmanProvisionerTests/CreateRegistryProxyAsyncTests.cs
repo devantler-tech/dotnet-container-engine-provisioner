@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
-/// Unit tests for <see cref="DockerProvisioner.CreateRegistryProxyAsync(string, int, ReadOnlyCollection{Uri}, CancellationToken)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
+/// Unit tests for <see cref="PodmanProvisioner.CreateRegistryProxyAsync(string, int, ReadOnlyCollection{Uri}, CancellationToken)"/> and <see cref="PodmanProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.
 /// </summary>
 public class CreateRegistryProxyAsyncTests
 {
-  readonly DockerProvisioner _provisioner = new();
+  readonly PodmanProvisioner _provisioner = new();
 
   /// <summary>
   /// Tests whether the registry is created when it does not exist.
@@ -23,7 +23,7 @@ public class CreateRegistryProxyAsyncTests
     );
 
     // Arrange
-    string registryName = "docker-registry-proxy_docker";
+    string registryName = "docker-registry-proxy_podman";
     int port = 6999;
     var cancellationToken = CancellationToken.None;
 
@@ -51,7 +51,7 @@ public class CreateRegistryProxyAsyncTests
     );
 
     // Arrange
-    string registryName = "docker-registry-proxy_docker";
+    string registryName = "docker-registry-proxy_podman";
     int port = 6999;
     var cancellationToken = CancellationToken.None;
 

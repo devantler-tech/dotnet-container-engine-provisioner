@@ -23,8 +23,8 @@ public class ConnectContainerToNetworkByNameAsyncTests
     );
 
     // Arrange
-    string containerName = "connect_container_to_network_by_name_test";
-    string networkName = "test_network_by_name";
+    string containerName = "connect_container_to_network_by_name_test_docker";
+    string networkName = "test_network_by_name_docker";
     await _dockerProvisioner.Client.Images.CreateImageAsync(
       new ImagesCreateParameters
       {
