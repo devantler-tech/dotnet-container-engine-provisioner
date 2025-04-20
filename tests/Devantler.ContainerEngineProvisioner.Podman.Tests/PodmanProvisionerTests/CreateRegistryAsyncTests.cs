@@ -22,7 +22,7 @@ public class CreateRegistryAsyncTests
 
     // Arrange
     string registryName = "registry_podman";
-    int port = 5999;
+    int port = 5998;
     var cancellationToken = CancellationToken.None;
 
     // Act
@@ -50,7 +50,7 @@ public class CreateRegistryAsyncTests
 
     // Arrange
     string registryName = "registry_podman";
-    int port = 5999;
+    int port = 5998;
     var cancellationToken = CancellationToken.None;
 
     // Act
@@ -79,7 +79,7 @@ public class CreateRegistryAsyncTests
 
     // Arrange
     string registryName = "registry_podman";
-    int port = 5999;
+    int port = 5998;
     var cancellationToken = CancellationToken.None;
     Uri proxyUrl = new("http://proxy:8080");
 
