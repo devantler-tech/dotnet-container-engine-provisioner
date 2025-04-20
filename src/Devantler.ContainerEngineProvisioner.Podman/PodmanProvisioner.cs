@@ -18,7 +18,7 @@ public sealed class PodmanProvisioner : IContainerEngineProvisioner
   /// <summary>
   /// The Docker client
   /// </summary>
-  public DockerClient Client => _provisioner.Client;
+  public DockerClient Client { get; }
 
   /// <summary>
   /// Initializes a new instance of the <see cref="PodmanProvisioner"/> class.
@@ -30,6 +30,7 @@ public sealed class PodmanProvisioner : IContainerEngineProvisioner
       $"unix:///run/user/${Environment.GetEnvironmentVariable("UID")}/podman/podman.sock" : File.Exists("/run/podman/podman.sock") ?
       "unix:///run/podman/podman.sock" : "unix:///var/run/docker.sock";
     _provisioner = new DockerProvisioner(podmanSocket);
+    Client = _provisioner.Client;
   }
 
   /// <inheritdoc/>
@@ -66,7 +67,7 @@ public sealed class PodmanProvisioner : IContainerEngineProvisioner
 
   /// <inheritdoc/>
   public async Task ConnectContainerToNetworkByNameAsync(string containerName, string networkName, CancellationToken cancellationToken = default) =>
-    await _provisioner.ConnectContainerToNetworkByIdAsync(containerName, networkName, cancellationToken).ConfigureAwait(false);
+    await _provisioner.ConnectContainerToNetworkByNameAsync(containerName, networkName, cancellationToken).ConfigureAwait(false);
 
   /// <inheritdoc/>
   public async Task ConnectContainerToNetworkByIdAsync(string containerId, string networkId, CancellationToken cancellationToken = default) =>

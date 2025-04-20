@@ -7,7 +7,7 @@ namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTes
 /// </summary>
 public class ConnectContainerToNetworkByIdAsyncTests
 {
-  readonly PodmanProvisioner _dockerProvisioner = new();
+  readonly PodmanProvisioner _podmanProvisioner = new();
 
   /// <summary>
   /// Tests the <see cref="PodmanProvisioner.ConnectContainerToNetworkByIdAsync(string, string, CancellationToken)"/> method.
@@ -25,7 +25,7 @@ public class ConnectContainerToNetworkByIdAsyncTests
     // Arrange
     string containerName = "connect_container_to_network_by_id_test_podman";
     string networkName = "test_network_by_id_podman";
-    await _dockerProvisioner.Client.Images.CreateImageAsync(
+    await _podmanProvisioner.Client.Images.CreateImageAsync(
       new ImagesCreateParameters
       {
         FromImage = "alpine",
@@ -33,27 +33,27 @@ public class ConnectContainerToNetworkByIdAsyncTests
       },
       null,
       new Progress<JSONMessage>()).ConfigureAwait(false);
-    var createContainerResponse = await _dockerProvisioner.Client.Containers.CreateContainerAsync(new CreateContainerParameters
+    var createContainerResponse = await _podmanProvisioner.Client.Containers.CreateContainerAsync(new CreateContainerParameters
     {
       Image = "alpine:latest",
       Cmd = ["sleep", "inf"],
       Name = containerName
     }).ConfigureAwait(false);
-    _ = await _dockerProvisioner.Client.Containers.StartContainerAsync(
+    _ = await _podmanProvisioner.Client.Containers.StartContainerAsync(
       createContainerResponse.ID,
       new ContainerStartParameters()
     ).ConfigureAwait(false);
-    var createNetworkResponse = await _dockerProvisioner.Client.Networks.CreateNetworkAsync(new NetworksCreateParameters
+    var createNetworkResponse = await _podmanProvisioner.Client.Networks.CreateNetworkAsync(new NetworksCreateParameters
     {
       Name = networkName,
       Driver = "bridge"
     }).ConfigureAwait(false);
 
     // Act
-    await _dockerProvisioner.ConnectContainerToNetworkByIdAsync(createContainerResponse.ID, createNetworkResponse.ID).ConfigureAwait(false);
+    await _podmanProvisioner.ConnectContainerToNetworkByIdAsync(createContainerResponse.ID, createNetworkResponse.ID).ConfigureAwait(false);
 
     // Assert
-    var network = await _dockerProvisioner.Client.Networks.InspectNetworkAsync(createNetworkResponse.ID).ConfigureAwait(false);
+    var network = await _podmanProvisioner.Client.Networks.InspectNetworkAsync(createNetworkResponse.ID).ConfigureAwait(false);
     var container = network.Containers.FirstOrDefault(c => c.Key == createContainerResponse.ID);
     Assert.NotNull(network);
     Assert.Equal(networkName, network.Name);
@@ -61,8 +61,8 @@ public class ConnectContainerToNetworkByIdAsyncTests
     Assert.Equal(containerName, container.Value.Name);
 
     // Cleanup
-    _ = await _dockerProvisioner.Client.Containers.StopContainerAsync(createContainerResponse.ID, new ContainerStopParameters()).ConfigureAwait(false);
-    await _dockerProvisioner.Client.Containers.RemoveContainerAsync(createContainerResponse.ID, new ContainerRemoveParameters()).ConfigureAwait(false);
-    await _dockerProvisioner.Client.Networks.DeleteNetworkAsync(createNetworkResponse.ID).ConfigureAwait(false);
+    _ = await _podmanProvisioner.Client.Containers.StopContainerAsync(createContainerResponse.ID, new ContainerStopParameters()).ConfigureAwait(false);
+    await _podmanProvisioner.Client.Containers.RemoveContainerAsync(createContainerResponse.ID, new ContainerRemoveParameters()).ConfigureAwait(false);
+    await _podmanProvisioner.Client.Networks.DeleteNetworkAsync(createNetworkResponse.ID).ConfigureAwait(false);
   }
 }

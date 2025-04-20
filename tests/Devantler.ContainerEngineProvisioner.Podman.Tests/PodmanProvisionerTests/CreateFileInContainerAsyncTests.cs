@@ -7,7 +7,7 @@ namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTes
 /// </summary>
 public class CreateFileInContainerAsyncTests
 {
-  readonly PodmanProvisioner _dockerProvisioner = new();
+  readonly PodmanProvisioner _podmanProvisioner = new();
 
   /// <summary>
   /// Tests the <see cref="PodmanProvisioner.CreateDirectoryInContainerAsync(string, string, bool, CancellationToken)"/> creates a directory in a container.
@@ -23,7 +23,7 @@ public class CreateFileInContainerAsyncTests
     );
 
     // Arrange
-    await _dockerProvisioner.Client.Images.CreateImageAsync(
+    await _podmanProvisioner.Client.Images.CreateImageAsync(
       new ImagesCreateParameters
       {
         FromImage = "alpine",
@@ -31,13 +31,13 @@ public class CreateFileInContainerAsyncTests
       },
       null,
       new Progress<JSONMessage>()).ConfigureAwait(false);
-    var createContainerResponse = await _dockerProvisioner.Client.Containers.CreateContainerAsync(new CreateContainerParameters
+    var createContainerResponse = await _podmanProvisioner.Client.Containers.CreateContainerAsync(new CreateContainerParameters
     {
       Image = "alpine:latest",
       Cmd = ["sleep", "inf"],
       Name = "create_file_test_podman"
     }).ConfigureAwait(false);
-    _ = await _dockerProvisioner.Client.Containers.StartContainerAsync(
+    _ = await _podmanProvisioner.Client.Containers.StartContainerAsync(
       createContainerResponse.ID,
       new ContainerStartParameters()
     ).ConfigureAwait(false);
@@ -49,14 +49,14 @@ public class CreateFileInContainerAsyncTests
     await Task.Delay(5000).ConfigureAwait(false);
 
     // Act
-    await _dockerProvisioner.CreateFileInContainerAsync(containerId, filePath, fileContent).ConfigureAwait(false);
-    var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
+    await _podmanProvisioner.CreateFileInContainerAsync(containerId, filePath, fileContent).ConfigureAwait(false);
+    var execCreateResponse = await _podmanProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
     {
       AttachStdout = true,
       AttachStderr = true,
       Cmd = ["sh", "-c", $"if [ -f \"{filePath}\" ]; then echo \"File exists\"; else echo \"File does not exist\"; fi"]
     }).ConfigureAwait(false);
-    using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false).ConfigureAwait(false);
+    using var execStream = await _podmanProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false).ConfigureAwait(false);
 
     // Assert
     var output = await execStream.ReadOutputToEndAsync(CancellationToken.None).ConfigureAwait(false);
@@ -64,7 +64,7 @@ public class CreateFileInContainerAsyncTests
     Assert.Equal("File exists", stdout.Trim());
 
     // Cleanup
-    await _dockerProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters
+    await _podmanProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters
     {
       Force = true
     }).ConfigureAwait(false);

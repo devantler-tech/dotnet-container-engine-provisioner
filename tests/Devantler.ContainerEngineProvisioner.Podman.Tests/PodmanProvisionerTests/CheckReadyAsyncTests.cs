@@ -5,7 +5,7 @@ namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTes
 /// </summary>
 public class CheckReadyAsyncTests
 {
-  readonly PodmanProvisioner _provisioner = new();
+  readonly PodmanProvisioner _podmanProvisioner = new();
 
   /// <summary>
   /// Tests whether the the boolean value returned by the method is true when the Docker engine is ready.
@@ -21,7 +21,7 @@ public class CheckReadyAsyncTests
     );
 
     // Act
-    bool containerEngineIsReady = await _provisioner.CheckReadyAsync(CancellationToken.None).ConfigureAwait(false);
+    bool containerEngineIsReady = await _podmanProvisioner.CheckReadyAsync(CancellationToken.None).ConfigureAwait(false);
 
     // Assert
     Assert.True(containerEngineIsReady);

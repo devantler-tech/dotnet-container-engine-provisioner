@@ -7,7 +7,7 @@ namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTes
 /// </summary>
 public class CreateRegistryProxyAsyncTests
 {
-  readonly PodmanProvisioner _provisioner = new();
+  readonly PodmanProvisioner _podmanProvisioner = new();
 
   /// <summary>
   /// Tests whether the registry is created when it does not exist.
@@ -24,18 +24,18 @@ public class CreateRegistryProxyAsyncTests
 
     // Arrange
     string registryName = "docker-registry-proxy_podman";
-    int port = 6999;
+    int port = 6998;
     var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
+    await _podmanProvisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
 
     // Assert
-    bool registryExists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken: cancellationToken).ConfigureAwait(false);
+    bool registryExists = await _podmanProvisioner.CheckContainerExistsAsync(registryName, cancellationToken: cancellationToken).ConfigureAwait(false);
     Assert.True(registryExists);
 
     // Cleanup
-    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken: cancellationToken).ConfigureAwait(false);
+    await _podmanProvisioner.DeleteRegistryAsync(registryName, cancellationToken: cancellationToken).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -52,18 +52,18 @@ public class CreateRegistryProxyAsyncTests
 
     // Arrange
     string registryName = "docker-registry-proxy_podman";
-    int port = 6999;
+    int port = 6998;
     var cancellationToken = CancellationToken.None;
 
     // Act
-    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
-    await _provisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
+    await _podmanProvisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
+    await _podmanProvisioner.CreateRegistryProxyAsync(registryName, port, new ReadOnlyCollection<Uri>([new("https://registry-1.docker.io"), new("https://ghcr.io")]), cancellationToken: cancellationToken).ConfigureAwait(false);
 
     // Assert
-    bool registry1Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken).ConfigureAwait(false);
-    await _provisioner.DeleteRegistryAsync(registryName, cancellationToken).ConfigureAwait(false);
+    bool registry1Exists = await _podmanProvisioner.CheckContainerExistsAsync(registryName, cancellationToken).ConfigureAwait(false);
+    await _podmanProvisioner.DeleteRegistryAsync(registryName, cancellationToken).ConfigureAwait(false);
     Assert.True(registry1Exists);
-    bool registry2Exists = await _provisioner.CheckContainerExistsAsync(registryName, cancellationToken).ConfigureAwait(false);
+    bool registry2Exists = await _podmanProvisioner.CheckContainerExistsAsync(registryName, cancellationToken).ConfigureAwait(false);
     Assert.False(registry2Exists);
   }
 }
