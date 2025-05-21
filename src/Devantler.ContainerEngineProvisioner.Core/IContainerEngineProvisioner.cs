@@ -23,6 +23,22 @@ public interface IContainerEngineProvisioner
   Task CreateRegistryAsync(string name, int port, Uri? proxyUrl = default, CancellationToken cancellationToken = default);
 
   /// <summary>
+  /// Pulls a docker image from a remote registry.
+  /// </summary>
+  /// <param name="imageName"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  Task PullImageAsync(string imageName, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Checks if a docker image exists in the local registry.
+  /// </summary>
+  /// <param name="imageName"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  Task<bool> CheckImageExistsAsync(string imageName, CancellationToken cancellationToken = default);
+
+  /// <summary>
   /// Creates a 'rpardini/docker-registry-proxy' in the container engine.
   /// </summary>
   /// <param name="name"></param>

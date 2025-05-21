@@ -163,33 +163,41 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters(), cancellationToken).ConfigureAwait(false);
   }
 
-  async Task PullImageAsync(string fullImageName, CancellationToken cancellationToken)
+  /// <summary>
+  /// Pulls an image from the Docker registry if it does not exist locally.
+  /// </summary>
+  /// <param name="imageName"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  public async Task PullImageAsync(string imageName, CancellationToken cancellationToken)
   {
-    bool imageExists = await CheckImageExistsAsync(fullImageName, cancellationToken).ConfigureAwait(false);
+    ArgumentNullException.ThrowIfNull(imageName);
+
+    bool imageExists = await CheckImageExistsAsync(imageName, cancellationToken).ConfigureAwait(false);
 
     if (!imageExists)
     {
-      Console.WriteLine($" • Pulling image '{fullImageName}'");
+      Console.WriteLine($" • Pulling image '{imageName}'");
       await Client.Images.CreateImageAsync(new ImagesCreateParameters
       {
-        FromImage = fullImageName.Split(':')[0],
-        Tag = fullImageName.Split(':')[1]
+        FromImage = imageName.Split(':')[0],
+        Tag = imageName.Split(':')[1]
       }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
-      Console.WriteLine($" ✓ Pulled image '{fullImageName}'");
+      Console.WriteLine($" ✓ Pulled image '{imageName}'");
     }
   }
 
   /// <summary>
   /// Checks if an image exists locally. If it does not, it pulls the image from the Docker registry.
   /// </summary>
-  /// <param name="fullImageName"></param>
+  /// <param name="imageName"></param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  public async Task<bool> CheckImageExistsAsync(string fullImageName, CancellationToken cancellationToken)
+  public async Task<bool> CheckImageExistsAsync(string imageName, CancellationToken cancellationToken)
   {
     var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
     bool imageExists = images.Any(img =>
-      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
+      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(imageName, StringComparison.OrdinalIgnoreCase))
     );
     return imageExists;
   }
