@@ -135,7 +135,6 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
 
     if (!imageExists)
     {
-      Console.WriteLine($" • Pulling image {fullImageName}");
       var cloudControllerContainerImageParameters = new ImagesCreateParameters
       {
         FromImage = fullImageName.Split(':')[0],
@@ -145,11 +144,6 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       {
         FromImage = "registry:2"
       }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
-      Console.WriteLine($" ✓ Pulled image {fullImageName}");
-    }
-    else
-    {
-      Console.WriteLine($" ✓ Image {fullImageName} already exists locally, skipping pull");
     }
 
     var createContainerParameters = new CreateContainerParameters
