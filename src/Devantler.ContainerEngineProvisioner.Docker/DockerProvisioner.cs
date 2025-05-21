@@ -128,23 +128,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       return;
     }
     string fullImageName = "registry:3";
-    var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
-    bool imageExists = images.Any(img =>
-      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
-    );
-
-    if (!imageExists)
-    {
-      var cloudControllerContainerImageParameters = new ImagesCreateParameters
-      {
-        FromImage = fullImageName.Split(':')[0],
-        Tag = fullImageName.Split(':')[1]
-      };
-      await Client.Images.CreateImageAsync(new ImagesCreateParameters
-      {
-        FromImage = "registry:3"
-      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
-    }
+    await PullImageAsync(fullImageName, cancellationToken).ConfigureAwait(false);
 
     var createContainerParameters = new CreateContainerParameters
     {
@@ -179,6 +163,37 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     _ = await Client.Containers.StartContainerAsync(registry.ID, new ContainerStartParameters(), cancellationToken).ConfigureAwait(false);
   }
 
+  async Task PullImageAsync(string fullImageName, CancellationToken cancellationToken)
+  {
+    bool imageExists = await CheckImageExistsAsync(fullImageName, cancellationToken).ConfigureAwait(false);
+
+    if (!imageExists)
+    {
+      Console.WriteLine($" • Pulling image '{fullImageName}'");
+      await Client.Images.CreateImageAsync(new ImagesCreateParameters
+      {
+        FromImage = fullImageName.Split(':')[0],
+        Tag = fullImageName.Split(':')[1]
+      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+      Console.WriteLine($" ✓ Pulled image '{fullImageName}'");
+    }
+  }
+
+  /// <summary>
+  /// Checks if an image exists locally. If it does not, it pulls the image from the Docker registry.
+  /// </summary>
+  /// <param name="fullImageName"></param>
+  /// <param name="cancellationToken"></param>
+  /// <returns></returns>
+  public async Task<bool> CheckImageExistsAsync(string fullImageName, CancellationToken cancellationToken)
+  {
+    var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
+    bool imageExists = images.Any(img =>
+      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
+    );
+    return imageExists;
+  }
+
   /// <inheritdoc/>
   public async Task CreateRegistryProxyAsync(string name, int port, ReadOnlyCollection<Uri> proxyUrls, CancellationToken cancellationToken = default)
   {
@@ -189,28 +204,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       return;
     }
     string fullImageName = "rpardini/docker-registry-proxy:0.6.5";
-    var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
-    bool imageExists = images.Any(img =>
-      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
-    );
-    if (!imageExists)
-    {
-      Console.WriteLine($" • Pulling image {fullImageName}");
-      var cloudControllerContainerImageParameters = new ImagesCreateParameters
-      {
-        FromImage = fullImageName.Split(':')[0],
-        Tag = fullImageName.Split(':')[1]
-      };
-      await Client.Images.CreateImageAsync(new ImagesCreateParameters
-      {
-        FromImage = fullImageName
-      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
-      Console.WriteLine($" ✓ Pulled image {fullImageName}");
-    }
-    else
-    {
-      Console.WriteLine($" ✓ Image {fullImageName} already exists locally, skipping pull");
-    }
+    await PullImageAsync(fullImageName, cancellationToken).ConfigureAwait(false);
 
     var createContainerParameters = new CreateContainerParameters
     {
