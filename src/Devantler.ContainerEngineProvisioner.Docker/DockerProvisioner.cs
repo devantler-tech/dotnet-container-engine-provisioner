@@ -177,13 +177,13 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
 
     if (!imageExists)
     {
-      Console.WriteLine($" • Pulling image '{imageName}'");
+      Console.WriteLine($"• Pulling image '{imageName}'");
       await Client.Images.CreateImageAsync(new ImagesCreateParameters
       {
         FromImage = imageName.Split(':')[0],
         Tag = imageName.Split(':')[1]
       }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
-      Console.WriteLine($" ✓ Pulled image '{imageName}'");
+      Console.WriteLine($"✓ Pulled image '{imageName}'");
     }
   }
 
