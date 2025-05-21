@@ -127,7 +127,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     {
       return;
     }
-    string fullImageName = "registry:2";
+    string fullImageName = "registry:3";
     var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
     bool imageExists = images.Any(img =>
       img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
@@ -142,7 +142,7 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
       };
       await Client.Images.CreateImageAsync(new ImagesCreateParameters
       {
-        FromImage = "registry:2"
+        FromImage = "registry:3"
       }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
     }
 
