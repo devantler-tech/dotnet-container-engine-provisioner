@@ -127,15 +127,34 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     {
       return;
     }
+    string fullImageName = "registry:2";
+    var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
+    bool imageExists = images.Any(img =>
+      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
+    );
 
-    await Client.Images.CreateImageAsync(new ImagesCreateParameters
+    if (!imageExists)
     {
-      FromImage = "registry:2"
-    }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+      Console.WriteLine($" • Pulling image {fullImageName}");
+      var cloudControllerContainerImageParameters = new ImagesCreateParameters
+      {
+        FromImage = fullImageName.Split(':')[0],
+        Tag = fullImageName.Split(':')[1]
+      };
+      await Client.Images.CreateImageAsync(new ImagesCreateParameters
+      {
+        FromImage = "registry:2"
+      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+      Console.WriteLine($" ✓ Pulled image {fullImageName}");
+    }
+    else
+    {
+      Console.WriteLine($" ✓ Image {fullImageName} already exists locally, skipping pull");
+    }
 
     var createContainerParameters = new CreateContainerParameters
     {
-      Image = "registry:2",
+      Image = fullImageName,
       Name = name,
       HostConfig = new HostConfig
       {
@@ -175,11 +194,29 @@ public sealed class DockerProvisioner : IContainerEngineProvisioner
     {
       return;
     }
-
-    await Client.Images.CreateImageAsync(new ImagesCreateParameters
+    string fullImageName = "rpardini/docker-registry-proxy:0.6.5";
+    var images = await Client.Images.ListImagesAsync(new ImagesListParameters { All = true }, cancellationToken).ConfigureAwait(false);
+    bool imageExists = images.Any(img =>
+      img.RepoTags != null && img.RepoTags.Any(tag => tag.Equals(fullImageName, StringComparison.OrdinalIgnoreCase))
+    );
+    if (!imageExists)
     {
-      FromImage = "rpardini/docker-registry-proxy:0.6.5",
-    }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+      Console.WriteLine($" • Pulling image {fullImageName}");
+      var cloudControllerContainerImageParameters = new ImagesCreateParameters
+      {
+        FromImage = fullImageName.Split(':')[0],
+        Tag = fullImageName.Split(':')[1]
+      };
+      await Client.Images.CreateImageAsync(new ImagesCreateParameters
+      {
+        FromImage = fullImageName
+      }, null, new Progress<JSONMessage>(), cancellationToken).ConfigureAwait(false);
+      Console.WriteLine($" ✓ Pulled image {fullImageName}");
+    }
+    else
+    {
+      Console.WriteLine($" ✓ Image {fullImageName} already exists locally, skipping pull");
+    }
 
     var createContainerParameters = new CreateContainerParameters
     {
