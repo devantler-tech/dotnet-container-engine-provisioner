@@ -72,6 +72,14 @@ public sealed class PodmanProvisioner : IContainerEngineProvisioner
   /// <inheritdoc/>
   public async Task ConnectContainerToNetworkByIdAsync(string containerId, string networkId, CancellationToken cancellationToken = default) =>
     await _provisioner.ConnectContainerToNetworkByIdAsync(containerId, networkId, cancellationToken).ConfigureAwait(false);
+
+  /// <inheritdoc/>
+  public async Task PullImageAsync(string imageName, CancellationToken cancellationToken = default) =>
+    await _provisioner.PullImageAsync(imageName, cancellationToken).ConfigureAwait(false);
+
+  /// <inheritdoc/>
+  public async Task<bool> CheckImageExistsAsync(string imageName, CancellationToken cancellationToken = default) =>
+    await _provisioner.CheckImageExistsAsync(imageName, cancellationToken).ConfigureAwait(false);
 }
 
 
