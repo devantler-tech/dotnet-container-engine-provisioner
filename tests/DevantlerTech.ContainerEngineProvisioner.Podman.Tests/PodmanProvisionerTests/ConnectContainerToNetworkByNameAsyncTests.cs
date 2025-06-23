@@ -1,6 +1,6 @@
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
+namespace DevantlerTech.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
 /// Unit tests for <see cref="PodmanProvisioner.ConnectContainerToNetworkByNameAsync(string, string, CancellationToken)"/>.

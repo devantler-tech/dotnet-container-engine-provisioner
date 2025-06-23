@@ -1,6 +1,6 @@
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace DevantlerTech.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
 /// Unit tests for <see cref="DockerProvisioner.ConnectContainerToNetworkByNameAsync(string, string, CancellationToken)"/>.

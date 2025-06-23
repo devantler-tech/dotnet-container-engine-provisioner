@@ -16,7 +16,7 @@ To get started, you can install the packages from NuGet.
 
 ```bash
 # For provisioning resources in Docker
-dotnet add package Devantler.ContainerEngineProvisioner.Docker
+dotnet add package DevantlerTech.ContainerEngineProvisioner.Docker
 ```
 
 ## 📝 Usage
@@ -24,7 +24,7 @@ dotnet add package Devantler.ContainerEngineProvisioner.Docker
 To use the provisioners, all you need to do is to create and use a new instance of the provisioner.
 
 ```csharp
-using Devantler.ContainerEngineProvisioner.Docker;
+using DevantlerTech.ContainerEngineProvisioner.Docker;
 
 var provisioner = new DockerProvisioner();
 

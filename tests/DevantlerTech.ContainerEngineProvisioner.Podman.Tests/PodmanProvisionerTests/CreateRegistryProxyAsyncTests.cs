@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace Devantler.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
+namespace DevantlerTech.ContainerEngineProvisioner.Podman.Tests.PodmanProvisionerTests;
 
 /// <summary>
 /// Unit tests for <see cref="PodmanProvisioner.CreateRegistryProxyAsync(string, int, ReadOnlyCollection{Uri}, CancellationToken)"/> and <see cref="PodmanProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.

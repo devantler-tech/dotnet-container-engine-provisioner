@@ -1,4 +1,4 @@
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace DevantlerTech.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
 /// Unit tests for <see cref="DockerProvisioner.CheckReadyAsync(CancellationToken)"/>.

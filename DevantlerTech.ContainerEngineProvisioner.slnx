@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/DevantlerTech.ContainerEngineProvisioner.Core/DevantlerTech.ContainerEngineProvisioner.Core.csproj" />
+    <Project Path="src/DevantlerTech.ContainerEngineProvisioner.Docker/DevantlerTech.ContainerEngineProvisioner.Docker.csproj" />
+    <Project Path="src/DevantlerTech.ContainerEngineProvisioner.Podman/DevantlerTech.ContainerEngineProvisioner.Podman.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DevantlerTech.ContainerEngineProvisioner.Docker.Tests/DevantlerTech.ContainerEngineProvisioner.Docker.Tests.csproj" />
+    <Project Path="tests/DevantlerTech.ContainerEngineProvisioner.Podman.Tests/DevantlerTech.ContainerEngineProvisioner.Podman.Tests.csproj" />
+  </Folder>
+</Solution>
