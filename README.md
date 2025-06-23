@@ -6,30 +6,6 @@
 
 Simple provisioners that can provision various resources in container engines.
 
-<details>
-  <summary>Show/hide folder structure</summary>
-
-<!-- readme-tree start -->
-```
-.
-├── .github
-│   └── workflows
-├── src
-│   ├── Devantler.ContainerEngineProvisioner.Core
-│   ├── Devantler.ContainerEngineProvisioner.Docker
-│   └── Devantler.ContainerEngineProvisioner.Podman
-└── tests
-    ├── Devantler.ContainerEngineProvisioner.Docker.Tests
-    │   └── DockerProvisionerTests
-    └── Devantler.ContainerEngineProvisioner.Podman.Tests
-        └── PodmanProvisionerTests
-
-12 directories
-```
-<!-- readme-tree end -->
-
-</details>
-
 ## Prerequisites
 
 - [.NET](https://dotnet.microsoft.com/en-us/)
