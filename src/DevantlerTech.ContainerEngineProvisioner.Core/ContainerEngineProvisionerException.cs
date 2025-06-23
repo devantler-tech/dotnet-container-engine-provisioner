@@ -1,4 +1,4 @@
-namespace Devantler.ContainerEngineProvisioner.Core;
+namespace DevantlerTech.ContainerEngineProvisioner.Core;
 
 /// <summary>
 /// An exception thrown by a container engine provisioner.

@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
-using Devantler.ContainerEngineProvisioner.Core;
-using Devantler.ContainerEngineProvisioner.Docker;
+using DevantlerTech.ContainerEngineProvisioner.Core;
+using DevantlerTech.ContainerEngineProvisioner.Docker;
 using Docker.DotNet;
 
-namespace Devantler.ContainerEngineProvisioner.Podman;
+namespace DevantlerTech.ContainerEngineProvisioner.Podman;
 
 /// <summary>
 /// A provisioner for Docker.

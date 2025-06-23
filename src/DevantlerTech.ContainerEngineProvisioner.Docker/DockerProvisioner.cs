@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
-using Devantler.ContainerEngineProvisioner.Core;
+using DevantlerTech.ContainerEngineProvisioner.Core;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Docker;
+namespace DevantlerTech.ContainerEngineProvisioner.Docker;
 
 /// <summary>
 /// A provisioner for Docker.

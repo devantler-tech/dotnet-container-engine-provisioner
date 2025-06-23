@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace DevantlerTech.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
 /// Unit tests for <see cref="DockerProvisioner.CreateRegistryProxyAsync(string, int, ReadOnlyCollection{Uri}, CancellationToken)"/> and <see cref="DockerProvisioner.DeleteRegistryAsync(string, CancellationToken)"/>.

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Devantler.ContainerEngineProvisioner.Core;
+namespace DevantlerTech.ContainerEngineProvisioner.Core;
 
 /// <summary>
 /// A container engine provisioner capable of modifying resources in a container engine.

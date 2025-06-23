@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Devantler.ContainerEngineProvisioner.Core\Devantler.ContainerEngineProvisioner.Core.csproj" />
+    <ProjectReference Include="..\..\src\DevantlerTech.ContainerEngineProvisioner.Core\DevantlerTech.ContainerEngineProvisioner.Core.csproj" />
   </ItemGroup>
 
 </Project>

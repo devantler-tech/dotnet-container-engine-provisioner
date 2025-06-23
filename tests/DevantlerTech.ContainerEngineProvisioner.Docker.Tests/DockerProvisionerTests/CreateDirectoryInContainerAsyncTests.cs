@@ -1,11 +1,11 @@
 using Docker.DotNet.Models;
 
-namespace Devantler.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
+namespace DevantlerTech.ContainerEngineProvisioner.Docker.Tests.DockerProvisionerTests;
 
 /// <summary>
 /// Tests for <see cref="DockerProvisioner"/>.
 /// </summary>
-public class CreateFileInContainerAsyncTests
+public class CreateDirectoryInContainerAsyncTests
 {
   readonly DockerProvisioner _dockerProvisioner = new();
 
@@ -14,7 +14,7 @@ public class CreateFileInContainerAsyncTests
   /// </summary>
   /// <returns></returns>
   [SkippableFact]
-  public async Task CreateFileInContainerAsync_ValidParameters_CreatesFile()
+  public async Task CreateDirectoryInContainerAsync_ValidParameters_CreatesDirectory()
   {
     //TODO: Support MacOS and Windows when GitHub Actions runners supports dind.
     Skip.If(
@@ -35,33 +35,33 @@ public class CreateFileInContainerAsyncTests
     {
       Image = "alpine:latest",
       Cmd = ["sleep", "inf"],
-      Name = "create_file_test_docker"
+      Name = "create_directory_test_docker"
     }).ConfigureAwait(false);
     _ = await _dockerProvisioner.Client.Containers.StartContainerAsync(
       createContainerResponse.ID,
       new ContainerStartParameters()
     ).ConfigureAwait(false);
     string containerId = createContainerResponse.ID;
-    string fileContent = "Hello, World!";
-    string filePath = "/etc/hello.txt";
+    string path = "/etc/new_directory";
+    bool recursive = true;
 
     // Sleep 5 sec
     await Task.Delay(5000).ConfigureAwait(false);
 
     // Act
-    await _dockerProvisioner.CreateFileInContainerAsync(containerId, filePath, fileContent).ConfigureAwait(false);
+    await _dockerProvisioner.CreateDirectoryInContainerAsync(containerId, path, recursive).ConfigureAwait(false);
     var execCreateResponse = await _dockerProvisioner.Client.Exec.ExecCreateContainerAsync(containerId, new ContainerExecCreateParameters
     {
       AttachStdout = true,
       AttachStderr = true,
-      Cmd = ["sh", "-c", $"if [ -f \"{filePath}\" ]; then echo \"File exists\"; else echo \"File does not exist\"; fi"]
+      Cmd = ["sh", "-c", $"if [ -d \"{path}\" ]; then echo \"Directory exists\"; else echo \"Directory does not exist\"; fi"]
     }).ConfigureAwait(false);
-    using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false).ConfigureAwait(false);
 
     // Assert
-    var output = await execStream.ReadOutputToEndAsync(CancellationToken.None).ConfigureAwait(false);
-    string stdout = output.stdout;
-    Assert.Equal("File exists", stdout.Trim());
+    using var execStream = await _dockerProvisioner.Client.Exec.StartAndAttachContainerExecAsync(execCreateResponse.ID, false).ConfigureAwait(false);
+    var (stdout, _) = await execStream.ReadOutputToEndAsync(default).ConfigureAwait(false);
+    string output = stdout;
+    Assert.Equal("Directory exists", output.Trim());
 
     // Cleanup
     await _dockerProvisioner.Client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters

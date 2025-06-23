@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Devantler.ContainerEngineProvisioner.Docker\Devantler.ContainerEngineProvisioner.Docker.csproj" />
+    <ProjectReference Include="..\..\src\DevantlerTech.ContainerEngineProvisioner.Docker\DevantlerTech.ContainerEngineProvisioner.Docker.csproj" />
   </ItemGroup>
 
   <ItemGroup>
