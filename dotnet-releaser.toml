@@ -1,0 +1,6 @@
+# configuration file for dotnet-releaser
+[msbuild]
+project = "DevantlerTech.ContainerEngineProvisioner.slnx"
+[github]
+user = "devantler-tech"
+repo = "dotnet-container-engine-provisioner"
